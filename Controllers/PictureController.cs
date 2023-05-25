@@ -9,7 +9,7 @@ namespace TimeWise.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserController : ControllerBase
+    public class PictureController : ControllerBase
     {
         static IFirebaseConfig config = new FirebaseConfig
         {
@@ -18,21 +18,21 @@ namespace TimeWise.Controllers
         };
         IFirebaseClient client = new FireSharp.FirebaseClient(config);
 
-        private readonly ILogger<UserController> _logger;
+        private readonly ILogger<PictureController> _logger;
 
-        public UserController(ILogger<UserController> logger)
+        public PictureController(ILogger<PictureController> logger)
         {
             _logger = logger;
         }
 
-        [HttpPost("AddUser")]
-        public void AddUser([FromBody] User user)
+        [HttpPost("AddPicture")]
+        public void AddPicture([FromBody] Picture picture)
         {
 
-            var data = user;
-            PushResponse response = client.Push("users/", data);
-            data.UserId = response.Result.name;
-            SetResponse setResponse = client.Set("users/" + data.UserId, data);
+            var data = picture;
+            PushResponse response = client.Push("pictures/", data);
+            data.PictureId = response.Result.name;
+            SetResponse setResponse = client.Set("pictures/" + data.PictureId, data);
             Console.WriteLine("status Code: " + setResponse.StatusCode);
             if (setResponse.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -43,41 +43,41 @@ namespace TimeWise.Controllers
                 ModelState.AddModelError(string.Empty, "Something went wrong!!");
             }
         }
-        [HttpPost("EditUser")]
-        public void EditUser(string? UserId, [FromBody] User user)
+        [HttpPost("EditPicture")]
+        public void EditPicture(string? PictureId, [FromBody] Picture picture)
         {
-            user.UserId = UserId;
-            SetResponse response = client.Set("users/" + UserId, user);
+            picture.PictureId = PictureId;
+            SetResponse response = client.Set("pictures/" + PictureId, picture);
 
         }
 
-        [HttpGet("GetUser")]
-        public User GetUser(string? id)
+        [HttpGet("GetPicture")]
+        public Picture GetPicture(string? id)
         {
-            FirebaseResponse response = client.Get("users/" + id);
-            User data = JsonConvert.DeserializeObject<User>(response.Body);
+            FirebaseResponse response = client.Get("pictures/" + id);
+            Picture data = JsonConvert.DeserializeObject<Picture>(response.Body);
             return data;
         }
-        [HttpGet("GetAllUsers")]
-        public List<User> GetAllUsers()
+        [HttpGet("GetAllPictures")]
+        public List<Picture> GetAllPictures()
         {
-            FirebaseResponse response = client.Get("users");
+            FirebaseResponse response = client.Get("pictures");
             dynamic data = JsonConvert.DeserializeObject<dynamic>(response.Body);
-            var list = new List<User>();
+            var list = new List<Picture>();
             if (data != null)
             {
                 foreach (var item in data)
                 {
-                    list.Add(JsonConvert.DeserializeObject<User>(((JProperty)item).Value.ToString()));
+                    list.Add(JsonConvert.DeserializeObject<Picture>(((JProperty)item).Value.ToString()));
                 }
             }
             return list;
         }
-        [HttpDelete("DeleteUser")]
+        [HttpDelete("DeletePicture")]
         public void Delete(string? id)
         {
             client = new FireSharp.FirebaseClient(config);
-            FirebaseResponse response = client.Delete("users/" + id);
+            FirebaseResponse response = client.Delete("pictures/" + id);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace TimeWise.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserController : ControllerBase
+    public class CategoryController : ControllerBase
     {
         static IFirebaseConfig config = new FirebaseConfig
         {
@@ -18,21 +18,21 @@ namespace TimeWise.Controllers
         };
         IFirebaseClient client = new FireSharp.FirebaseClient(config);
 
-        private readonly ILogger<UserController> _logger;
+        private readonly ILogger<CategoryController> _logger;
 
-        public UserController(ILogger<UserController> logger)
+        public CategoryController(ILogger<CategoryController> logger)
         {
             _logger = logger;
         }
 
-        [HttpPost("AddUser")]
-        public void AddUser([FromBody] User user)
+        [HttpPost("AddCategory")]
+        public void AddCategory([FromBody] Category category)
         {
 
-            var data = user;
-            PushResponse response = client.Push("users/", data);
-            data.UserId = response.Result.name;
-            SetResponse setResponse = client.Set("users/" + data.UserId, data);
+            var data = category;
+            PushResponse response = client.Push("categories/", data);
+            data.CategoryId = response.Result.name;
+            SetResponse setResponse = client.Set("categories/" + data.CategoryId, data);
             Console.WriteLine("status Code: " + setResponse.StatusCode);
             if (setResponse.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -43,41 +43,41 @@ namespace TimeWise.Controllers
                 ModelState.AddModelError(string.Empty, "Something went wrong!!");
             }
         }
-        [HttpPost("EditUser")]
-        public void EditUser(string? UserId, [FromBody] User user)
+        [HttpPost("EditCategory")]
+        public void EditCategory(string? CategoryId, [FromBody] Category category)
         {
-            user.UserId = UserId;
-            SetResponse response = client.Set("users/" + UserId, user);
+            category.CategoryId = CategoryId;
+            SetResponse response = client.Set("categories/" + CategoryId, category);
 
         }
 
-        [HttpGet("GetUser")]
-        public User GetUser(string? id)
+        [HttpGet("GetCategory")]
+        public Category GetCategory(string? id)
         {
-            FirebaseResponse response = client.Get("users/" + id);
-            User data = JsonConvert.DeserializeObject<User>(response.Body);
+            FirebaseResponse response = client.Get("categories/" + id);
+            Category data = JsonConvert.DeserializeObject<Category>(response.Body);
             return data;
         }
-        [HttpGet("GetAllUsers")]
-        public List<User> GetAllUsers()
+        [HttpGet("GetAllCategories")]
+        public List<Category> GetAllCategories()
         {
-            FirebaseResponse response = client.Get("users");
+            FirebaseResponse response = client.Get("categories");
             dynamic data = JsonConvert.DeserializeObject<dynamic>(response.Body);
-            var list = new List<User>();
+            var list = new List<Category>();
             if (data != null)
             {
                 foreach (var item in data)
                 {
-                    list.Add(JsonConvert.DeserializeObject<User>(((JProperty)item).Value.ToString()));
+                    list.Add(JsonConvert.DeserializeObject<Category>(((JProperty)item).Value.ToString()));
                 }
             }
             return list;
         }
-        [HttpDelete("DeleteUser")]
+        [HttpDelete("DeleteCategory")]
         public void Delete(string? id)
         {
             client = new FireSharp.FirebaseClient(config);
-            FirebaseResponse response = client.Delete("users/" + id);
+            FirebaseResponse response = client.Delete("categories/" + id);
         }
     }
 }
