@@ -32,6 +32,7 @@ namespace TimeWise.Controllers
             var data = timesheet;
             PushResponse response = client.Push("timesheets/", data);
             data.TimesheetId = response.Result.name;
+            data.StartDate = DateTime.Now;
             SetResponse setResponse = client.Set("timesheets/" + data.TimesheetId, data);
             Console.WriteLine("status Code: " + setResponse.StatusCode);
             if (setResponse.StatusCode == System.Net.HttpStatusCode.OK)
@@ -76,7 +77,6 @@ namespace TimeWise.Controllers
         [HttpDelete("DeleteTimesheet")]
         public void Delete(string? id)
         {
-            client = new FireSharp.FirebaseClient(config);
             FirebaseResponse response = client.Delete("timesheets/" + id);
         }
     }

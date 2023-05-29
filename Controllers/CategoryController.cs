@@ -76,7 +76,6 @@ namespace TimeWise.Controllers
         [HttpDelete("DeleteCategory")]
         public void Delete(string? id)
         {
-            client = new FireSharp.FirebaseClient(config);
             FirebaseResponse response = client.Delete("categories/" + id);
         }
     }
