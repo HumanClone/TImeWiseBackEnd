@@ -46,15 +46,25 @@ namespace TimeWise.Controllers
         [HttpPost("EditCategory")]
         public void EditCategory(string? CategoryId, [FromBody] Category category)
         {
-            category.CategoryId = CategoryId;
-            SetResponse response = client.Set("categories/" + CategoryId, category);
+            FirebaseResponse FireResponse = client.Get("categories/" + CategoryId);
+            Category data = JsonConvert.DeserializeObject<Category>(FireResponse.Body);
+            data.CategoryId = CategoryId;
+            if(category.UserId != null)
+            {
+                data.UserId = category.UserId;
+            }
+            if(category.Name != null)
+            {
+                data.Name = category.Name;
+            }
+            SetResponse response = client.Set("categories/" + CategoryId, data);
 
         }
 
         [HttpGet("GetCategory")]
-        public Category GetCategory(string? id)
+        public Category GetCategory(string? CategoryId)
         {
-            FirebaseResponse response = client.Get("categories/" + id);
+            FirebaseResponse response = client.Get("categories/" + CategoryId);
             Category data = JsonConvert.DeserializeObject<Category>(response.Body);
             return data;
         }
@@ -74,9 +84,9 @@ namespace TimeWise.Controllers
             return list;
         }
         [HttpDelete("DeleteCategory")]
-        public void Delete(string? id)
+        public void Delete(string? CategoryId)
         {
-            FirebaseResponse response = client.Delete("categories/" + id);
+            FirebaseResponse response = client.Delete("categories/" + CategoryId);
         }
     }
 }

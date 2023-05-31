@@ -47,15 +47,33 @@ namespace TimeWise.Controllers
         [HttpPost("EditTimesheet")]
         public void EditTimesheet(string? TimesheetId, [FromBody] Timesheet timesheet)
         {
-            timesheet.TimesheetId = TimesheetId;
-            SetResponse response = client.Set("timesheets/" + TimesheetId, timesheet);
+            FirebaseResponse FireResponse = client.Get("timesheets/" + TimesheetId);
+            Timesheet data = JsonConvert.DeserializeObject<Timesheet>(FireResponse.Body);
+            data.TimesheetId = TimesheetId;
+            if(timesheet.CategoryId != null)
+            {
+                data.CategoryId = timesheet.CategoryId;
+            }
+            if(timesheet.PictureId != null)
+            {
+                data.PictureId = timesheet.PictureId;
+            }
+            if(timesheet.Description != null)
+            {
+                data.Description = timesheet.Description;
+            }
+            if(timesheet.Hours != null)
+            {
+                data.Hours = timesheet.Hours;
+            }
+            SetResponse response = client.Set("timesheets/" + TimesheetId, data);
 
         }
 
         [HttpGet("GetTimeSheet")]
-        public Timesheet GetTimesheet(string? id)
+        public Timesheet GetTimesheet(string? TimesheetId)
         {
-            FirebaseResponse response = client.Get("timesheets/" + id);
+            FirebaseResponse response = client.Get("timesheets/" + TimesheetId);
             Timesheet data = JsonConvert.DeserializeObject<Timesheet>(response.Body);
             return data;
         }
@@ -75,9 +93,9 @@ namespace TimeWise.Controllers
             return list;
         }
         [HttpDelete("DeleteTimesheet")]
-        public void Delete(string? id)
+        public void Delete(string? TimesheetId)
         {
-            FirebaseResponse response = client.Delete("timesheets/" + id);
+            FirebaseResponse response = client.Delete("timesheets/" + TimesheetId);
         }
     }
 }

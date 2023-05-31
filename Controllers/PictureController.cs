@@ -46,15 +46,25 @@ namespace TimeWise.Controllers
         [HttpPost("EditPicture")]
         public void EditPicture(string? PictureId, [FromBody] Picture picture)
         {
-            picture.PictureId = PictureId;
-            SetResponse response = client.Set("pictures/" + PictureId, picture);
+            FirebaseResponse FireResponse = client.Get("pictures/" + PictureId);
+            Picture data = JsonConvert.DeserializeObject<Picture>(FireResponse.Body);
+            data.PictureId = PictureId;
+            if(picture.UserId != null)
+            {
+                data.UserId = picture.UserId;
+            }
+            if(picture.Description != null)
+            {
+                data.Description = picture.Description;
+            }
+            SetResponse response = client.Set("pictures/" + PictureId, data);
 
         }
 
         [HttpGet("GetPicture")]
-        public Picture GetPicture(string? id)
+        public Picture GetPicture(string? PictureId)
         {
-            FirebaseResponse response = client.Get("pictures/" + id);
+            FirebaseResponse response = client.Get("pictures/" + PictureId);
             Picture data = JsonConvert.DeserializeObject<Picture>(response.Body);
             return data;
         }
@@ -74,9 +84,9 @@ namespace TimeWise.Controllers
             return list;
         }
         [HttpDelete("DeletePicture")]
-        public void Delete(string? id)
+        public void Delete(string? PictureId)
         {
-            FirebaseResponse response = client.Delete("pictures/" + id);
+            FirebaseResponse response = client.Delete("pictures/" + PictureId);
         }
     }
 }

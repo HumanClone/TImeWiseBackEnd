@@ -46,15 +46,41 @@ namespace TimeWise.Controllers
         [HttpPost("EditUser")]
         public void EditUser(string? UserId, [FromBody] User user)
         {
-            user.UserId = UserId;
-            SetResponse response = client.Set("users/" + UserId, user);
+            FirebaseResponse FireResponse = client.Get("users/" + UserId);
+            User data = JsonConvert.DeserializeObject<User>(FireResponse.Body);
+            data.UserId = UserId;
+            if(user.Name != null)
+            {
+                data.Name= user.Name;
+            }
+            if(user.Email != null)
+            {
+                data.Email= user.Email;
+            }
+            if(user.Job != null)
+            {
+                data.Job= user.Job;
+            }
+            if(user.Password != null)
+            {
+                data.Password= user.Password;
+            }
+            if(user.Min != null)
+            {
+                data.Min= user.Min;
+            }
+            if(user.Max != null)
+            {
+                data.Max= user.Max;
+            }
+            SetResponse response = client.Set("users/" + UserId, data);
 
         }
 
         [HttpGet("GetUser")]
-        public User GetUser(string? id)
+        public User GetUser(string? UserId)
         {
-            FirebaseResponse response = client.Get("users/" + id);
+            FirebaseResponse response = client.Get("users/" + UserId);
             User data = JsonConvert.DeserializeObject<User>(response.Body);
             return data;
         }
@@ -74,9 +100,9 @@ namespace TimeWise.Controllers
             return list;
         }
         [HttpDelete("DeleteUser")]
-        public void Delete(string? id)
+        public void Delete(string? UserId)
         {
-            FirebaseResponse response = client.Delete("users/" + id);
+            FirebaseResponse response = client.Delete("users/" + UserId);
         }
     }
 }
