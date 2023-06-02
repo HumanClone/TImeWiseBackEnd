@@ -77,7 +77,147 @@ namespace TimeWise.Controllers
             Timesheet data = JsonConvert.DeserializeObject<Timesheet>(response.Body);
             return data;
         }
-        [HttpGet("GetAllTimesheet")]
+        [HttpGet("GetAllUserTimesheets")]
+        public List<Timesheet> GetAllUserTimesheets(string? UserId)
+        {
+            FirebaseResponse response = client.Get("timesheets");
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            var list = new List<Timesheet>();
+            if (data != null)
+            {
+                foreach (var item in data)
+                {
+                    Timesheet temp = JsonConvert.DeserializeObject<Timesheet>(((JProperty)item).Value.ToString());
+                    if (temp.UserId == UserId)
+                    {
+                        list.Add(temp);
+                    }
+                }
+            }
+            return list;
+        }
+        [HttpGet("GetAllTimesheetsOnWeeks")]
+        public List<Timesheet> GetAllTimesheetsOnWeeks(DateTime? date)
+        {
+            FirebaseResponse response = client.Get("timesheets");
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            var list = new List<Timesheet>();
+            if (data != null)
+            {
+                foreach (var item in data)
+                {
+                    Timesheet temp = JsonConvert.DeserializeObject<Timesheet>(((JProperty)item).Value.ToString());
+                    if ((int)((temp.StartDate.Value.DayOfYear / 365.25) * 52) == (int)((date.Value.DayOfYear / 365.25) * 52))
+                    {
+                        list.Add(temp);
+                    }
+                }
+            }
+            return list;
+        }
+        [HttpGet("GetAllTimesheetsOnMonths")]
+        public List<Timesheet> GetAllTimesheetsOnMonths(DateTime? date)
+        {
+            FirebaseResponse response = client.Get("timesheets");
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            var list = new List<Timesheet>();
+            if (data != null)
+            {
+                foreach (var item in data)
+                {
+                    Timesheet temp = JsonConvert.DeserializeObject<Timesheet>(((JProperty)item).Value.ToString());
+                    if(temp.StartDate.Value.Month == date.Value.Month)
+                    {
+                        list.Add(temp);
+                    }
+                }
+            }
+            return list;
+        }
+        [HttpGet("GetAllTimesheetsInRange")]
+        public List<Timesheet> GetAllTimesheetsInRange(DateTime? start, DateTime? end, string? UserId)
+        {
+            FirebaseResponse response = client.Get("timesheets");
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            var list = new List<Timesheet>();
+            if (data != null)
+            {
+                foreach (var item in data)
+                {
+                    Timesheet temp = JsonConvert.DeserializeObject<Timesheet>(((JProperty)item).Value.ToString());
+                    if (temp.UserId == UserId)
+                    {
+                        if(end != null)
+                        {
+                            if(temp.StartDate.Value >= start.Value && temp.StartDate <= end.Value)
+                            {
+                                list.Add(temp);
+                            }
+                        }
+                        else
+                        {
+                            if(temp.StartDate.Value >= start.Value)
+                            {
+                                list.Add(temp);
+                            }
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+        [HttpGet("GetAllTimesheetsOfUserCategory")]
+        public List<Timesheet> GetAllTimesheetOfUserCategory(string? UserId, string? CategoryId)
+        {
+            FirebaseResponse response = client.Get("timesheets");
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            var list = new List<Timesheet>();
+            if (data != null)
+            {
+                foreach (var item in data)
+                {
+                    Timesheet temp = JsonConvert.DeserializeObject<Timesheet>(((JProperty)item).Value.ToString());
+                    if (temp.UserId == UserId && temp.CategoryId == CategoryId)
+                    {
+                        list.Add(temp);
+                    }
+                }
+            }
+            return list;
+        }
+        [HttpGet("GetAllTimesheetsInRangeAndCategory")]
+        public List<Timesheet> GetAllTimesheetsInRangeAndCategory(DateTime? start, DateTime? end, string? UserId, string? CategoryId)
+        {
+            FirebaseResponse response = client.Get("timesheets");
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            var list = new List<Timesheet>();
+            if (data != null)
+            {
+                foreach (var item in data)
+                {
+                    Timesheet temp = JsonConvert.DeserializeObject<Timesheet>(((JProperty)item).Value.ToString());
+                    if (temp.UserId == UserId && temp.CategoryId == CategoryId)
+                    {
+                        if (end != null)
+                        {
+                            if (temp.StartDate.Value >= start.Value && temp.StartDate <= end.Value)
+                            {
+                                list.Add(temp);
+                            }
+                        }
+                        else
+                        {
+                            if (temp.StartDate.Value >= start.Value)
+                            {
+                                list.Add(temp);
+                            }
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+        [HttpGet("GetAllTimesheets")]
         public List<Timesheet> GetAllTimesheets()
         {
             FirebaseResponse response = client.Get("timesheets");

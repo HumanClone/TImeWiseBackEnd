@@ -68,6 +68,141 @@ namespace TimeWise.Controllers
             Category data = JsonConvert.DeserializeObject<Category>(response.Body);
             return data;
         }
+        [HttpGet("GetAllUserCategories")]
+        public List<Category> GetAllUserCategories(string? UserId)
+        {
+            FirebaseResponse response = client.Get("categories");
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            var list = new List<Category>();
+            if (data != null)
+            {
+                foreach (var item in data)
+                {
+                    Category temp = JsonConvert.DeserializeObject<Category>(((JProperty)item).Value.ToString());
+                    if(temp.UserId == UserId)
+                    {
+                        list.Add(temp);
+                    }
+                }
+            }
+            return list;
+        }
+        [HttpGet("GetAllUserCategoriesWithHoursSum")]
+        public List<Category> GetAllUserCategoriesWithHoursSum(string? UserId)
+        {
+            FirebaseResponse response = client.Get("categories");
+            dynamic CategoryData = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            response = client.Get("timesheets");
+            dynamic TimesheetData = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            var list = new List<Category>();
+            if (CategoryData != null)
+            {
+                foreach (var item in CategoryData)
+                {
+                    Category temp = JsonConvert.DeserializeObject<Category>(((JProperty)item).Value.ToString());
+                    if (temp.UserId == UserId)
+                    {
+                        temp.TotalHours = 0;
+                        foreach (var item2 in TimesheetData)
+                        {
+                            Timesheet timesheetTemp = JsonConvert.DeserializeObject<Timesheet>(((JProperty)item2).Value.ToString());
+                            if(timesheetTemp.CategoryId == temp.CategoryId)
+                            {
+                                temp.TotalHours += timesheetTemp.Hours;
+                            }
+                        }
+                        list.Add(temp);
+                    }
+                }
+            }
+            return list;
+        }
+        [HttpGet("GetAllUserCategoriesWithHoursSumWithinDateRange")]
+        public List<Category> GetAllUserCategoriesWithHoursSumWithinDateRange(string? UserId, DateTime? start, DateTime? end)
+        {
+            FirebaseResponse response = client.Get("categories");
+            dynamic CategoryData = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            response = client.Get("timesheets");
+            dynamic TimesheetData = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            var list = new List<Category>();
+            if (CategoryData != null)
+            {
+                foreach (var item in CategoryData)
+                {
+                    Category temp = JsonConvert.DeserializeObject<Category>(((JProperty)item).Value.ToString());
+                    if (temp.UserId == UserId)
+                    {
+                        temp.TotalHours = 0;
+                        foreach (var item2 in TimesheetData)
+                        {
+                            Timesheet timesheetTemp = JsonConvert.DeserializeObject<Timesheet>(((JProperty)item2).Value.ToString());
+                            if (timesheetTemp.CategoryId == temp.CategoryId)
+                            {
+                                if (end != null)
+                                {
+                                    if (timesheetTemp.StartDate.Value >= start.Value && timesheetTemp.StartDate <= end.Value)
+                                    {
+                                        temp.TotalHours += timesheetTemp.Hours;
+                                    }
+                                }
+                                else
+                                {
+                                    if (timesheetTemp.StartDate.Value >= start.Value)
+                                    {
+                                        temp.TotalHours += timesheetTemp.Hours;
+                                    }
+                                }
+                            }
+                        }
+                        list.Add(temp);
+                    }
+                }
+            }
+            return list;
+        }
+        [HttpGet("GetUserCategorieWithHoursSumWithinDateRange")]
+        public List<Category> GetUserCategorieWithHoursSumWithinDateRange(string? UserId, string? CategoryId, DateTime? start, DateTime? end)
+        {
+            FirebaseResponse response = client.Get("categories");
+            dynamic CategoryData = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            response = client.Get("timesheets");
+            dynamic TimesheetData = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            var list = new List<Category>();
+            if (CategoryData != null)
+            {
+                foreach (var item in CategoryData)
+                {
+                    Category temp = JsonConvert.DeserializeObject<Category>(((JProperty)item).Value.ToString());
+                    if (temp.UserId == UserId && temp.CategoryId == CategoryId)
+                    {
+                        temp.TotalHours = 0;
+                        foreach (var item2 in TimesheetData)
+                        {
+                            Timesheet timesheetTemp = JsonConvert.DeserializeObject<Timesheet>(((JProperty)item2).Value.ToString());
+                            if (timesheetTemp.CategoryId == temp.CategoryId)
+                            {
+                                if (end != null)
+                                {
+                                    if (timesheetTemp.StartDate.Value >= start.Value && timesheetTemp.StartDate <= end.Value)
+                                    {
+                                        temp.TotalHours += timesheetTemp.Hours;
+                                    }
+                                }
+                                else
+                                {
+                                    if (timesheetTemp.StartDate.Value >= start.Value)
+                                    {
+                                        temp.TotalHours += timesheetTemp.Hours;
+                                    }
+                                }
+                            }
+                        }
+                        list.Add(temp);
+                    }
+                }
+            }
+            return list;
+        }
         [HttpGet("GetAllCategories")]
         public List<Category> GetAllCategories()
         {
