@@ -160,8 +160,8 @@ namespace TimeWise.Controllers
             }
             return list;
         }
-        [HttpGet("GetUserCategorieWithHoursSumWithinDateRange")]
-        public List<Category> GetUserCategorieWithHoursSumWithinDateRange(string? UserId, string? CategoryId, DateTime? start, DateTime? end)
+        [HttpGet("GetUserCategoryWithHoursSumWithinDateRange")]
+        public List<Category> GetUserCategoryWithHoursSumWithinDateRange(string? UserId, string? CategoryId, DateTime? start, DateTime? end)
         {
             FirebaseResponse response = client.Get("categories");
             dynamic CategoryData = JsonConvert.DeserializeObject<dynamic>(response.Body);
@@ -203,6 +203,30 @@ namespace TimeWise.Controllers
             }
             return list;
         }
+        [HttpGet("GetUserCategoryWithHoursSum")]
+        public List<Category> GetUserCategoryWithHoursSum(string? UserId, string? CategoryId)
+        {
+            FirebaseResponse response = client.Get("categories/" + CategoryId);
+            Category data = JsonConvert.DeserializeObject<Category>(response.Body);
+            response = client.Get("timesheets");
+            dynamic TimesheetData = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            var list = new List<Category>();
+            if (data.UserId == UserId)
+            {
+                data.TotalHours = 0;
+                foreach (var item2 in TimesheetData)
+                {
+                    Timesheet timesheetTemp = JsonConvert.DeserializeObject<Timesheet>(((JProperty)item2).Value.ToString());
+                    if (timesheetTemp.CategoryId == data.CategoryId)
+                    {
+                        data.TotalHours += timesheetTemp.Hours;
+                    }
+                }
+                list.Add(data);
+            }
+            return list;
+        }
+        
         [HttpGet("GetAllCategories")]
         public List<Category> GetAllCategories()
         {

@@ -31,7 +31,6 @@ namespace TimeWise.Controllers
 
             var data = user;
             PushResponse response = client.Push("users/", data);
-            data.UserId = response.Result.name;
             SetResponse setResponse = client.Set("users/" + data.UserId, data);
             Console.WriteLine("status Code: " + setResponse.StatusCode);
             if (setResponse.StatusCode == System.Net.HttpStatusCode.OK)
@@ -60,10 +59,6 @@ namespace TimeWise.Controllers
             if(user.Job != null)
             {
                 data.Job= user.Job;
-            }
-            if(user.Password != null)
-            {
-                data.Password= user.Password;
             }
             if(user.Min != null)
             {

@@ -97,7 +97,7 @@ namespace TimeWise.Controllers
             return list;
         }
         [HttpGet("GetAllTimesheetsOnWeeks")]
-        public List<Timesheet> GetAllTimesheetsOnWeeks(DateTime? date)
+        public List<Timesheet> GetAllTimesheetsOnWeeks(string? UserId, DateTime? date)
         {
             FirebaseResponse response = client.Get("timesheets");
             dynamic data = JsonConvert.DeserializeObject<dynamic>(response.Body);
@@ -107,16 +107,19 @@ namespace TimeWise.Controllers
                 foreach (var item in data)
                 {
                     Timesheet temp = JsonConvert.DeserializeObject<Timesheet>(((JProperty)item).Value.ToString());
-                    if ((int)((temp.StartDate.Value.DayOfYear / 365.25) * 52) == (int)((date.Value.DayOfYear / 365.25) * 52))
+                    if(temp.UserId == UserId)
                     {
-                        list.Add(temp);
+                        if ((int)((temp.StartDate.Value.DayOfYear / 365.25) * 52) == (int)((date.Value.DayOfYear / 365.25) * 52))
+                        {
+                            list.Add(temp);
+                        }
                     }
                 }
             }
             return list;
         }
         [HttpGet("GetAllTimesheetsOnMonths")]
-        public List<Timesheet> GetAllTimesheetsOnMonths(DateTime? date)
+        public List<Timesheet> GetAllTimesheetsOnMonths(string? UserId, DateTime? date)
         {
             FirebaseResponse response = client.Get("timesheets");
             dynamic data = JsonConvert.DeserializeObject<dynamic>(response.Body);
@@ -126,9 +129,12 @@ namespace TimeWise.Controllers
                 foreach (var item in data)
                 {
                     Timesheet temp = JsonConvert.DeserializeObject<Timesheet>(((JProperty)item).Value.ToString());
-                    if(temp.StartDate.Value.Month == date.Value.Month)
+                    if(temp.UserId == UserId)
                     {
-                        list.Add(temp);
+                        if (temp.StartDate.Value.Month == date.Value.Month)
+                        {
+                            list.Add(temp);
+                        }
                     }
                 }
             }

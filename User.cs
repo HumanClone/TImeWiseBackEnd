@@ -9,7 +9,6 @@ namespace TimeWise
 
         public string? Job { get; set; }
 
-        public string? Password { get; set; }
         public int? Min { get; set; }
         public int? Max { get; set; }
     }
