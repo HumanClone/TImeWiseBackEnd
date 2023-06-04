@@ -60,30 +60,33 @@ namespace TimeWise.Controllers
         [HttpPost("EditUser")]
         public void EditUser(string? UserId, [FromBody] User user)
         {
-            FirebaseResponse FireResponse = client.Get("users/" + UserId);
-            User data = JsonConvert.DeserializeObject<User>(FireResponse.Body);
-            data.UserId = UserId;
-            if(user.Name != null)
+            if (UserId != null)
             {
-                data.Name= user.Name;
+                FirebaseResponse FireResponse = client.Get("users/" + UserId);
+                User data = JsonConvert.DeserializeObject<User>(FireResponse.Body);
+                data.UserId = UserId;
+                if (user.Name != null)
+                {
+                    data.Name = user.Name;
+                }
+                if (user.Email != null)
+                {
+                    data.Email = user.Email;
+                }
+                if (user.Job != null)
+                {
+                    data.Job = user.Job;
+                }
+                if (user.Min != null)
+                {
+                    data.Min = user.Min;
+                }
+                if (user.Max != null)
+                {
+                    data.Max = user.Max;
+                }
+                SetResponse response = client.Set("users/" + UserId, data);
             }
-            if(user.Email != null)
-            {
-                data.Email= user.Email;
-            }
-            if(user.Job != null)
-            {
-                data.Job= user.Job;
-            }
-            if(user.Min != null)
-            {
-                data.Min= user.Min;
-            }
-            if(user.Max != null)
-            {
-                data.Max= user.Max;
-            }
-            SetResponse response = client.Set("users/" + UserId, data);
 
         }
 
