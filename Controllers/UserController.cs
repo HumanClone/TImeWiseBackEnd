@@ -30,9 +30,7 @@ namespace TimeWise.Controllers
         {
 
             var data = user;
-            PushResponse response = client.Push("users/", data);
             SetResponse setResponse = client.Set("users/" + data.UserId, data);
-            FirebaseResponse delResponse = client.Delete("users/" + response.Result.name);
             Console.WriteLine("status Code: " + setResponse.StatusCode);
             if (setResponse.StatusCode == System.Net.HttpStatusCode.OK)
             {
