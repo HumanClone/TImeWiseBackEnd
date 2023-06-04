@@ -13,8 +13,8 @@ namespace TimeWise.Controllers
     {
         static IFirebaseConfig config = new FirebaseConfig
         {
-            AuthSecret = "NShal8LlUUL8hxn6BBQ4874HNXCIO2tAgN8izMgK",
-            BasePath = "https://timewise-605da-default-rtdb.firebaseio.com"
+            AuthSecret = "jIUM3jxE49wERUhPc5N4KeiIzDiyyLQ6aNKQWXLV",
+            BasePath = "https://timewise-2ba0e-default-rtdb.firebaseio.com"
         };
         IFirebaseClient client = new FireSharp.FirebaseClient(config);
 
@@ -143,6 +143,7 @@ namespace TimeWise.Controllers
                                     if (timesheetTemp.StartDate.Value >= start.Value && timesheetTemp.StartDate <= end.Value)
                                     {
                                         temp.TotalHours += timesheetTemp.Hours;
+                                        list.Add(temp);
                                     }
                                 }
                                 else
@@ -150,11 +151,11 @@ namespace TimeWise.Controllers
                                     if (timesheetTemp.StartDate.Value >= start.Value)
                                     {
                                         temp.TotalHours += timesheetTemp.Hours;
+                                        list.Add(temp);
                                     }
                                 }
                             }
                         }
-                        list.Add(temp);
                     }
                 }
             }
@@ -186,6 +187,7 @@ namespace TimeWise.Controllers
                                     if (timesheetTemp.StartDate.Value >= start.Value && timesheetTemp.StartDate <= end.Value)
                                     {
                                         temp.TotalHours += timesheetTemp.Hours;
+                                        list.Add(temp);
                                     }
                                 }
                                 else
@@ -193,11 +195,11 @@ namespace TimeWise.Controllers
                                     if (timesheetTemp.StartDate.Value >= start.Value)
                                     {
                                         temp.TotalHours += timesheetTemp.Hours;
+                                        list.Add(temp);
                                     }
                                 }
                             }
                         }
-                        list.Add(temp);
                     }
                 }
             }

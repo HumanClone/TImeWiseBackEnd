@@ -13,8 +13,8 @@ namespace TimeWise.Controllers
     {
         static IFirebaseConfig config = new FirebaseConfig
         {
-            AuthSecret = "NShal8LlUUL8hxn6BBQ4874HNXCIO2tAgN8izMgK",
-            BasePath = "https://timewise-605da-default-rtdb.firebaseio.com"
+            AuthSecret = "jIUM3jxE49wERUhPc5N4KeiIzDiyyLQ6aNKQWXLV",
+            BasePath = "https://timewise-2ba0e-default-rtdb.firebaseio.com"
         };
         IFirebaseClient client = new FireSharp.FirebaseClient(config);
 
@@ -32,6 +32,7 @@ namespace TimeWise.Controllers
             var data = user;
             PushResponse response = client.Push("users/", data);
             SetResponse setResponse = client.Set("users/" + data.UserId, data);
+            FirebaseResponse delResponse = client.Delete("users/" + response.Result.name);
             Console.WriteLine("status Code: " + setResponse.StatusCode);
             if (setResponse.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -87,6 +88,7 @@ namespace TimeWise.Controllers
             var list = new List<User>();
             if (data != null)
             {
+                Console.WriteLine(data);
                 foreach (var item in data)
                 {
                     list.Add(JsonConvert.DeserializeObject<User>(((JProperty)item).Value.ToString()));
