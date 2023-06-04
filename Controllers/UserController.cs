@@ -28,17 +28,33 @@ namespace TimeWise.Controllers
         [HttpPost("AddUser")]
         public void AddUser([FromBody] User user)
         {
-
-            var data = user;
-            SetResponse setResponse = client.Set("users/" + data.UserId, data);
-            Console.WriteLine("status Code: " + setResponse.StatusCode);
-            if (setResponse.StatusCode == System.Net.HttpStatusCode.OK)
+            bool noDups = true;
+            FirebaseResponse response = client.Get("users");
+            dynamic Userdata = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            if (Userdata != null)
             {
-                ModelState.AddModelError(string.Empty, "Added Succesfully");
+                foreach (var item in Userdata)
+                {
+                    User temp = JsonConvert.DeserializeObject<User>(((JProperty)item).Value.ToString());
+                    if(user.UserId == temp.UserId)
+                    {
+                        noDups = false;
+                    }
+                }
             }
-            else
+            if(noDups == true)
             {
-                ModelState.AddModelError(string.Empty, "Something went wrong!!");
+                var data = user;
+                SetResponse setResponse = client.Set("users/" + data.UserId, data);
+                Console.WriteLine("status Code: " + setResponse.StatusCode);
+                if (setResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    ModelState.AddModelError(string.Empty, "Added Succesfully");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Something went wrong!!");
+                }
             }
         }
         [HttpPost("EditUser")]
@@ -86,7 +102,6 @@ namespace TimeWise.Controllers
             var list = new List<User>();
             if (data != null)
             {
-                Console.WriteLine(data);
                 foreach (var item in data)
                 {
                     list.Add(JsonConvert.DeserializeObject<User>(((JProperty)item).Value.ToString()));
