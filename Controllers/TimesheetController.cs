@@ -65,6 +65,10 @@ namespace TimeWise.Controllers
             {
                 data.Hours = timesheet.Hours;
             }
+            if (timesheet.StartDate != null)
+            {
+                data.StartDate = timesheet.StartDate;
+            }
             SetResponse response = client.Set("timesheets/" + TimesheetId, data);
 
         }
