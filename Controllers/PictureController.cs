@@ -30,6 +30,8 @@ namespace TimeWise.Controllers
         {
 
             var data = picture;
+            PushResponse response = client.Push("pictures/", data);
+            data.PictureId = response.Result.name;
             SetResponse setResponse = client.Set("pictures/" + data.PictureId, data);
             Console.WriteLine("status Code: " + setResponse.StatusCode);
             if (setResponse.StatusCode == System.Net.HttpStatusCode.OK)
