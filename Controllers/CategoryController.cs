@@ -133,6 +133,7 @@ namespace TimeWise.Controllers
                     if (temp.UserId == UserId)
                     {
                         temp.TotalHours = 0;
+                        bool addTemp = false;
                         foreach (var item2 in TimesheetData)
                         {
                             Timesheet timesheetTemp = JsonConvert.DeserializeObject<Timesheet>(((JProperty)item2).Value.ToString());
@@ -142,19 +143,24 @@ namespace TimeWise.Controllers
                                 {
                                     if (timesheetTemp.StartDate.Value >= start.Value && timesheetTemp.StartDate <= end.Value)
                                     {
+                                        addTemp = true;
                                         temp.TotalHours += timesheetTemp.Hours;
-                                        list.Add(temp);
+                                        
                                     }
                                 }
                                 else
                                 {
                                     if (timesheetTemp.StartDate.Value >= start.Value)
                                     {
+                                        addTemp = true;
                                         temp.TotalHours += timesheetTemp.Hours;
-                                        list.Add(temp);
                                     }
                                 }
                             }
+                        }
+                        if (addTemp)
+                        {
+                            list.Add(temp);
                         }
                     }
                 }
@@ -177,6 +183,7 @@ namespace TimeWise.Controllers
                     if (temp.UserId == UserId && temp.CategoryId == CategoryId)
                     {
                         temp.TotalHours = 0;
+                        bool addTemp = false;
                         foreach (var item2 in TimesheetData)
                         {
                             Timesheet timesheetTemp = JsonConvert.DeserializeObject<Timesheet>(((JProperty)item2).Value.ToString());
@@ -186,19 +193,23 @@ namespace TimeWise.Controllers
                                 {
                                     if (timesheetTemp.StartDate.Value >= start.Value && timesheetTemp.StartDate <= end.Value)
                                     {
+                                        addTemp = true;
                                         temp.TotalHours += timesheetTemp.Hours;
-                                        list.Add(temp);
                                     }
                                 }
                                 else
                                 {
                                     if (timesheetTemp.StartDate.Value >= start.Value)
                                     {
+                                        addTemp = true;
                                         temp.TotalHours += timesheetTemp.Hours;
-                                        list.Add(temp);
                                     }
                                 }
                             }
+                        }
+                        if (addTemp)
+                        {
+                            list.Add(temp);
                         }
                     }
                 }
