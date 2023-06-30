@@ -97,7 +97,36 @@ namespace TimeWise.Controllers
                     }
                 }
             }
-            return list;
+            return list.OrderByDescending(x => x.StartDate.Value).ToList();
+        }
+        [HttpGet("GetAllUserTimesheetsFor30Days")]
+        public List<Timesheet> GetAllUserTimesheetsFor30Days(string? UserId)
+        {
+            FirebaseResponse response = client.Get("timesheets");
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            var list = new List<Timesheet>();
+            DateTime currentDate = DateTime.Now;
+            if (data != null)
+            {
+                foreach (var item in data)
+                {
+                    Timesheet temp = JsonConvert.DeserializeObject<Timesheet>(((JProperty)item).Value.ToString());
+                    if (temp.UserId == UserId)
+                    {
+
+                        if (temp.StartDate.Value >= currentDate.AddMonths(-1) && temp.StartDate <= currentDate)
+                        {
+                            list.Add(temp);
+                        }
+
+                        if (temp.StartDate.Value >= currentDate.AddMonths(-1))
+                        {
+                            list.Add(temp);
+                        }
+                    }
+                }
+            }
+            return list.OrderByDescending(x => x.StartDate.Value).ToList();
         }
         [HttpGet("GetAllTimesheetsOnWeeks")]
         public List<Timesheet> GetAllTimesheetsOnWeeks(string? UserId, DateTime? date)
@@ -119,7 +148,7 @@ namespace TimeWise.Controllers
                     }
                 }
             }
-            return list;
+            return list.OrderByDescending(x => x.StartDate.Value).ToList();
         }
         [HttpGet("GetAllTimesheetsOnMonths")]
         public List<Timesheet> GetAllTimesheetsOnMonths(string? UserId, DateTime? date)
@@ -141,7 +170,7 @@ namespace TimeWise.Controllers
                     }
                 }
             }
-            return list;
+            return list.OrderByDescending(x => x.StartDate.Value).ToList();
         }
         [HttpGet("GetAllTimesheetsInRange")]
         public List<Timesheet> GetAllTimesheetsInRange(DateTime? start, DateTime? end, string? UserId)
@@ -173,7 +202,7 @@ namespace TimeWise.Controllers
                     }
                 }
             }
-            return list;
+            return list.OrderByDescending(x => x.StartDate.Value).ToList();
         }
         [HttpGet("GetAllTimesheetsOfUserCategory")]
         public List<Timesheet> GetAllTimesheetOfUserCategory(string? UserId, string? CategoryId)
@@ -192,7 +221,7 @@ namespace TimeWise.Controllers
                     }
                 }
             }
-            return list;
+            return list.OrderByDescending(x => x.StartDate.Value).ToList();
         }
         [HttpGet("GetAllTimesheetsInRangeAndCategory")]
         public List<Timesheet> GetAllTimesheetsInRangeAndCategory(DateTime? start, DateTime? end, string? UserId, string? CategoryId)
@@ -224,7 +253,7 @@ namespace TimeWise.Controllers
                     }
                 }
             }
-            return list;
+            return list.OrderByDescending(x => x.StartDate.Value).ToList();
         }
         [HttpGet("GetAllTimesheets")]
         public List<Timesheet> GetAllTimesheets()
@@ -239,7 +268,7 @@ namespace TimeWise.Controllers
                     list.Add(JsonConvert.DeserializeObject<Timesheet>(((JProperty)item).Value.ToString()));
                 }
             }
-            return list;
+            return list.OrderByDescending(x => x.StartDate.Value).ToList();
         }
         [HttpDelete("DeleteTimesheet")]
         public void Delete(string? TimesheetId)
