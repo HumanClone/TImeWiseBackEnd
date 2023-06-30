@@ -118,11 +118,6 @@ namespace TimeWise.Controllers
                         {
                             list.Add(temp);
                         }
-
-                        if (temp.StartDate.Value >= currentDate.AddMonths(-1))
-                        {
-                            list.Add(temp);
-                        }
                     }
                 }
             }
